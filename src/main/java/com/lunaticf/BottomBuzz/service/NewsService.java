@@ -2,9 +2,7 @@ package com.lunaticf.BottomBuzz.service;
 
 import com.lunaticf.BottomBuzz.dao.NewsDAO;
 import com.lunaticf.BottomBuzz.dao.UserDAO;
-import com.lunaticf.BottomBuzz.model.News;
-import com.lunaticf.BottomBuzz.model.User;
-import com.lunaticf.BottomBuzz.model.ViewObject;
+import com.lunaticf.BottomBuzz.model.*;
 import com.lunaticf.BottomBuzz.utils.HelpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,13 +26,20 @@ public class NewsService {
     @Autowired
     private UserDAO userDAO;
 
+    @Autowired
+    private HostHolder hostHolder;
+
+    @Autowired
+    private LikeService likeService;
+
     public int addNews(News news) {
         newsDAO.addNews(news);
         return news.getId();
     }
 
     public List<ViewObject> getLatestNews(int userId, int offset, int limit) {
-//        return newsDAO.selectByUserIdAndOffset(userId, offset, limit);
+
+        int localUserId = hostHolder.getUser() != null ? hostHolder.getUser().getId() : 0;
 
         List<ViewObject> res = new ArrayList<>();
 
@@ -46,6 +51,14 @@ public class NewsService {
 
             User user = userDAO.getUser(singleNews.getUserId());
             vo.set("user", user);
+
+            // 如果当前有用户 就应该看到自己的状态
+            if (localUserId != 0) {
+                vo.set("like", likeService.getLikeStatus(localUserId, EntityType.ENTITY_NEWS, singleNews.getId()));
+            } else {
+                vo.set("like", 0);
+            }
+
             res.add(vo);
         }
         return res;
@@ -75,5 +88,8 @@ public class NewsService {
     public int updateCommentCount(int id, int commentCount) {
         return newsDAO.updateCommentCount(id, commentCount);
     }
+
+    public int updateLikeCount(int id, int likeCount) {return newsDAO.updateLikeCount(id, likeCount); }
+
 
 }

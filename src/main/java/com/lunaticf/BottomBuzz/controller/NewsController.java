@@ -2,6 +2,7 @@ package com.lunaticf.BottomBuzz.controller;
 
 import com.lunaticf.BottomBuzz.model.*;
 import com.lunaticf.BottomBuzz.service.CommentService;
+import com.lunaticf.BottomBuzz.service.LikeService;
 import com.lunaticf.BottomBuzz.service.NewsService;
 import com.lunaticf.BottomBuzz.service.UserService;
 import com.lunaticf.BottomBuzz.utils.HelpUtils;
@@ -37,6 +38,9 @@ public class NewsController {
     private UserService userService;
 
     @Autowired
+    private LikeService likeService;
+
+    @Autowired
     private HostHolder hostHolder;
 
     // 获取新闻详情页面
@@ -47,6 +51,13 @@ public class NewsController {
             News news = newsService.getNewsById(newsId);
 
             if (news != null) {
+                int localUserId = hostHolder.getUser() != null ? hostHolder.getUser().getId() : 0;
+                if (localUserId != 0) {
+                    model.addAttribute("like", likeService.getLikeStatus(localUserId, EntityType.ENTITY_NEWS, news.getId()));
+                } else {
+                    model.addAttribute("like", 0);
+                }
+
                 model.addAttribute("news", news);
 
                 // 获取新闻的评论

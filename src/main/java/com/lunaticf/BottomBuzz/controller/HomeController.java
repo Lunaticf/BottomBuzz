@@ -3,6 +3,7 @@ package com.lunaticf.BottomBuzz.controller;
 import com.lunaticf.BottomBuzz.model.HostHolder;
 import com.lunaticf.BottomBuzz.model.News;
 import com.lunaticf.BottomBuzz.model.ViewObject;
+import com.lunaticf.BottomBuzz.service.LikeService;
 import com.lunaticf.BottomBuzz.service.NewsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,6 +20,9 @@ public class HomeController {
 
     @Autowired
     private HostHolder hostHolder;
+
+    @Autowired
+    private LikeService likeService;
 
     @RequestMapping(path = {"/", "/home"}, method = {RequestMethod.GET, RequestMethod.POST})
         public String index(Model model, @RequestParam(value = "pop", defaultValue = "0") int pop) {
