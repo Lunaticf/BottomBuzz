@@ -28,4 +28,9 @@ public class JedisTests {
         System.out.print(ToStringBuilder.reflectionToString(u));
     }
 
+    @Test
+    public void testLpush() {
+        jedisAdapter.lpush("EVENT", "fuck");
+    }
+
 }

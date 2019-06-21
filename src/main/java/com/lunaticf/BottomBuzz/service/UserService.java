@@ -52,6 +52,9 @@ public class UserService {
         user.setHeadUrl(String.format("http://images.nowcoder.com/head/%dt.png", new Random().nextInt(1000)));
         userDAO.addUser(user);
 
+        map.put("userId", userDAO.getLastUserId());
+
+
         // 注册成功 马上登录
         String ticket = addLoginTicket(userDAO.getUserByName(username).getId());
         map.put("ticket", ticket);

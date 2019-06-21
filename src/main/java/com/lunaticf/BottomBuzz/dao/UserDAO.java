@@ -22,4 +22,7 @@ public interface UserDAO {
 
     @Update({"update ", TABLE_NAME, " set password = #{password} where id = #{id}"})
     void updatePassword(User user);
+
+    @Select({"select max(id) from ", TABLE_NAME})
+    int getLastUserId();
 }

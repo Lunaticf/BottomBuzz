@@ -2,6 +2,7 @@
 <div id="main">
     <div class="container">
         <ul class="letter-list">
+            <#if conversations??>
             <#list conversations as conversation>
             <li id="conversation-item-10005_622873">
                 <a class="letter-link"
@@ -39,6 +40,10 @@
                 </div>
             </li>
             </#list>
+            <#else>
+            您还没有站内信
+            </#if>
+
         </ul>
 
     </div>

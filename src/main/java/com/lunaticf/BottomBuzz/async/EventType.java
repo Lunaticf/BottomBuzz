@@ -3,10 +3,8 @@ package com.lunaticf.BottomBuzz.async;
 public enum EventType {
     LIKE(0),
     COMMENT(1),
-    LOGIN(2);
-    MAIL(3);
-
-
+    LOGIN(2),
+    REGISTER(3);
 
     private int value;
 

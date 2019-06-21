@@ -1,7 +1,11 @@
 package com.lunaticf.BottomBuzz.controller;
 
+import com.lunaticf.BottomBuzz.async.EventModel;
+import com.lunaticf.BottomBuzz.async.EventProducer;
+import com.lunaticf.BottomBuzz.async.EventType;
 import com.lunaticf.BottomBuzz.model.EntityType;
 import com.lunaticf.BottomBuzz.model.HostHolder;
+import com.lunaticf.BottomBuzz.model.News;
 import com.lunaticf.BottomBuzz.service.LikeService;
 import com.lunaticf.BottomBuzz.service.NewsService;
 import com.lunaticf.BottomBuzz.utils.HelpUtils;
@@ -28,6 +32,9 @@ public class LikeController {
     @Autowired
     NewsService newsService;
 
+    @Autowired
+    EventProducer eventProducer;
+
     @RequestMapping(path = "/like", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public String like(@Param("newsId") int newsId) {
@@ -37,6 +44,14 @@ public class LikeController {
 
             // 更新点赞数
             newsService.updateLikeCount(newsId, (int) likeCount);
+
+            News news = newsService.getNewsById(newsId);
+
+            // 发起事件
+            eventProducer.fireEvent(new EventModel().setEventType(EventType.LIKE).setActorId(hostHolder.getUser().getId())
+                    .setEntityOwnerId(news.getUserId()).setEntityId(news.getId()));
+
+
             return HelpUtils.getJSONString(0, String.valueOf(likeCount));
         } catch (Exception e) {
             long likeCount = likeService.like(hostHolder.getUser().getId(), EntityType.ENTITY_NEWS, newsId);

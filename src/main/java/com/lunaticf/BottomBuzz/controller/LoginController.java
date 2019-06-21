@@ -1,5 +1,8 @@
 package com.lunaticf.BottomBuzz.controller;
 
+import com.lunaticf.BottomBuzz.async.EventModel;
+import com.lunaticf.BottomBuzz.async.EventProducer;
+import com.lunaticf.BottomBuzz.async.EventType;
 import com.lunaticf.BottomBuzz.service.UserService;
 import com.lunaticf.BottomBuzz.utils.HelpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,9 @@ public class LoginController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private EventProducer eventProducer;
+
 
     @RequestMapping(path = {"/reg/"}, method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
@@ -37,6 +43,13 @@ public class LoginController {
                     cookie.setMaxAge(3600*24*5);
                 }
                 httpServletResponse.addCookie(cookie);
+
+                // 发送邮件事件
+                eventProducer.fireEvent(new
+                        EventModel(EventType.REGISTER)
+                        .setActorId(Integer.parseInt(map.get("userId").toString()))
+                        .setExt("username", username).setExt("to", "724922441@qq.com"));
+
                 return HelpUtils.getJSONString(0, "注册成功");
             } else {
                 return HelpUtils.getJSONString(1, map);
